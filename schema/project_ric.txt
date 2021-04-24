@@ -1,0 +1,94 @@
+[工作站]
+     - ssh HugoChen@cthulhu.ee.ntu.edu.tw
+     - ssh HugoChen@valkyrie.ee.ntu.edu.tw
+     - ssh HugoChen@athena.ee.ntu.edu.tw
+
+[執行]
+     - ./bin/ham_cycle_sat input/<input_file> output/<output_file> (但還沒寫write output部分)
+
+[ SAT Problem: Hamiltonian cycle problem ] --> 轉成 CNF 去解 
+
+    1. Source:
+        - 參考網址: https://reurl.cc/jqa5rm (第二頁, 分支界定法) --> TSP
+        - 參考網址: https://reurl.cc/5oVqW6 --> Hamiltonian cycle to SAT
+        - 參考網址: https://reurl.cc/qmo8Rp --> Hamiltonian cycle / Coloring / TSP to SAT
+        - 參考網址: https://reurl.cc/rao8W1 --> How to solve Hamiltonian cycle via SAT
+        - 參考網址: https://reurl.cc/jqa5n2 --> Efficient encoding Hamiltonian cycle to SAT
+
+    2. 轉成CNF, 用以下五點constraint將所有(vertex, edge)寫出一個個form, 再用SAT解:
+       (P.S. x_i_j: the i-th position in the Ham. path is occupied by node j.)
+       (兩個點有相連可以考慮存成矩陣)
+       (o) - Each node j must appear in the path.
+            * x_1_j || x_2_j || ... || x_n_j for each j
+       
+       (o) - No node j appears twice in the path.
+            * (x_i_j)' || (x_k_j)' for all i, j, k with i != k
+
+       (o) - Every position i on the path must be occupied.
+            * x_i_1 || x_i_2 || ... || x_i_n for each i
+
+       (o) - No two nodes j and k occupy the same position in the path.
+            * (x_i_j)' || (x_i_k)' for all i, j, k with j != k
+       
+       (o) - Non-adjacent nodes i and j cannot be adjacent in the path.
+            * (x_k_i)' || (x_k+1_j)' for (all (i, j) not in G) and (k = 1, 2, ..., n-1)
+
+     3. 檔案架構:
+          (o) - makefile
+
+          (o) - input format (argc == 吃進參數, 這邊吃進兩個參數: 頂點數/邊數)
+               -- input file name = a_b.in (a = # of vertices / b = # of edges)
+               -- # of vertices
+               -- # of edges
+               -- two nodes that are adjacent + weight (Ham=1, TSP can assign other value)
+
+          (o) - 如何建立一堆哈密頓環 (獨立出一個 generate_graph.cpp)
+               -- 圖為.in檔測資, 基本先放一個哈密頓環一個不是哈密頓環
+               -- 之後可以寫一個'generate_graph'的函數來產生測資
+               -- Generate_Graph()
+
+          (o) - 建立完圖後要讀檔
+               -- Read_Graph()
+
+          - 如何將每個 node 轉成 CNF
+
+          - SAT solver 吃甚麼樣的變數
+               -- include 'sat.h'
+               -- http://minisat.se/
+               -- Create a SAT solver object (e.g. SatSolver s;) (詳情見'README'@SAT)
+               -- Call "SatSolver::assumpSolve()" to solve
+               -- Please see "sat/test/satTest.cpp" for an example of using SAT.
+
+     4. 2021.04.26 TODO
+          - 多設edge變數, 每個node恰有兩個edge在cycle裡面, 每個edge對應的兩個端點要在cycle裡面
+               -- 變數可能還是會到N^2
+               -- 不要用矩陣
+               -- 每個variable或literal要設編號, 像是SAT solver是把var*2當作literal, var*2+1當作(literal)'
+               -- 如: var = 3 代表一個變數, 那他的對應literal --> a = 6, a' = 7
+               -- [2] AIG 4 1 2 ==> [2] = [0] & [1]
+                    --> s.addAigCNF(gates[2]->getVar(), gates[0]->getVar(), false, gates[1]->getVar(), false);
+
+          - 要排除一個圖有兩個cycle以上的可能 
+               -- 因為每個node恰有兩個edge在cycle裡面這個條件, 就算一個graph有兩個cycle也滿足解
+
+          - 更改sat.h的 addAigCNF (line 43)
+               -- 目標: 把原本2-input變成n-input
+               -- 用for迴圈等
+               -- 原本吃變數 var = va, vb 可以改成吃兩個 array, 塞很多變數, 可先防呆, 確定兩個array size一樣
+               -- fa/fb = true if it is inverted
+               -- PI ==> newVar() / AIG ==> newVar(), addAigCNF(aigVar, in0Var, in0Inv, in1Var, in1Inv) / PO ==> ignored
+
+          - 測資可以拿演算法 PA3 
+
+          - 條件
+               -- 1. 每個node一定要出現偶數次 (5_4.in / 4_4.in)
+               -- 2. 每個邊的兩個端點一定要出現在cycle中 (5_7.in)
+               -- 3. 解決多環問題 (6_6.in)
+               -- 4. 符合條件 (9_11.in)
+
+          - 時間複雜度
+               -- O(N)
+
+          - 設置const 0/1
+               -- const 0 --> gate = a & a'
+               -- const 1 --> gate = (b + b') = (b*b')'
