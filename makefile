@@ -12,12 +12,10 @@ all	: bin/ham_cycle_sat
 	@echo -n ""
 
 # optimized version
-bin/ham_cycle_sat	: ham_cycle.o main_opt.o proof.o solver.o file.o
-			$(CC) $(OPTFLAGS) ham_cycle.o main_opt.o proof.o solver.o file.o -o bin/ham_cycle_sat
+bin/ham_cycle_sat	: main_opt.o proof.o solver.o file.o
+			$(CC) $(OPTFLAGS) main_opt.o proof.o solver.o file.o -o bin/ham_cycle_sat
 main_opt.o 	: src/main.cpp
 			$(CC) $(CFLAGS) $< -Ilib -o $@
-ham_cycle.o	: src/ham_cycle.cpp src/Proof.cpp src/Solver.cpp src/File.cpp
-			$(CC) $(CFLAGS) $(OPTFLAGS) $< -o $@
 proof.o		: src/Proof.cpp
 			$(CC) $(CFLAGS) $(OPTFLAGS) $< -o $@
 solver.o	: src/Solver.cpp 

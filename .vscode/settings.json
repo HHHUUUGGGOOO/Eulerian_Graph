@@ -3,7 +3,13 @@
         "iostream": "cpp",
         "vector": "cpp",
         "bitset": "cpp",
-        "initializer_list": "cpp"
+        "initializer_list": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "regex": "cpp",
+        "utility": "cpp",
+        "valarray": "cpp",
+        "iosfwd": "cpp"
     },
     "python.pythonPath": "C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python36\\python.exe"
 }
