@@ -2,6 +2,8 @@
      - ssh HugoChen@cthulhu.ee.ntu.edu.tw
      - ssh HugoChen@valkyrie.ee.ntu.edu.tw
      - ssh HugoChen@athena.ee.ntu.edu.tw
+     - 積電工作站
+          -- ssh b07103@140.112.20.72
 
 [執行]
      - ./bin/ham_cycle_sat input/<input_file> output/<output_file> (但還沒寫write output部分)
