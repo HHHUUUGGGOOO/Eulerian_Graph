@@ -1,6 +1,6 @@
 /*****************************************************************************************
   FileName     [ main.cpp ]
-  PackageName  [ Hamiltonian-cycle-with-SAT ]
+  PackageName  [ Eulerian-graph-with-SAT ]
   Synopsis     [ Main function ]
   Author       [ Hugo, Chen ]
   Professor    [ Ric Huang ]
@@ -258,7 +258,7 @@ ham_cycle::report_result(const SatSolver& solver, bool result)
     cout << "Result" << endl;
     cout << "======" << endl;
     cout << "UNSAT (odd node)" << endl; 
-    cout << "Failed......It's not a Hamiltonian cycle !" << endl;
+    cout << "Failed......It's not a Eulerian graph !" << endl;
     cout << endl;
     return; 
   }
@@ -328,8 +328,8 @@ ham_cycle::report_result(const SatSolver& solver, bool result)
     cout << "======" << endl;
     cout << "Result" << endl;
     cout << "======" << endl;
-    if (multi_cycle) { cout << "UNSAT (multi-cycle)" << endl; cout << "Failed......It's not a Hamiltonian cycle !" << endl; }
-    else if (!multi_cycle) { cout << "SAT" << endl; cout << "Success!!! It's a Hamiltonian cycle !" << endl; }
+    if (multi_cycle) { cout << "UNSAT (multi-cycle)" << endl; cout << "Failed......It's not a Eulerian graph !" << endl; }
+    else if (!multi_cycle) { cout << "SAT" << endl; cout << "Success!!! It's a Eulerian graph !" << endl; }
     cout << endl;
     return;
   }
